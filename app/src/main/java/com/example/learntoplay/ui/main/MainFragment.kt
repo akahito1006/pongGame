@@ -1,11 +1,12 @@
 package com.example.learntoplay.ui.main
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.util.DisplayMetrics
+import android.view.*
+import android.view.Window.OnFrameMetricsAvailableListener
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.example.learntoplay.databinding.FragmentMainBinding
 
@@ -24,9 +25,13 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // window size
+        val windowWidth = requireActivity().windowManager.currentWindowMetrics.bounds.right // 720
 
         view.setOnTouchListener { view, motionEvent ->
             // where you touch on screen
@@ -36,8 +41,11 @@ class MainFragment : Fragment() {
             val playerCenterX = binding.player.width / 2
             val playerHeight = binding.player.height
             // set the position of the white bar
-            binding.player.x = touchX - playerCenterX
-            binding.player.y = touchY - playerHeight
+            val positionX = touchX - playerCenterX
+
+            if (positionX >= 0 && positionX + binding.player.width <= windowWidth) {
+                binding.player.x = positionX
+            }
             true
         }
     }
